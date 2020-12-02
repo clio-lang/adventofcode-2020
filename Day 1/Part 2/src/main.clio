@@ -1,0 +1,14 @@
+import "fs"
+
+fn find arr i1 i2 i3:
+  if arr[i1] + arr[i2] + arr[i3] = 2020: arr[i1] * arr[i2] * arr[i3]
+  else if i3 < arr.length - 1: find arr i1 i2 (i3 + 1)
+  else if i2 < arr.length - 1: find arr i1 (i2 + 1) 0
+  else if i1 < arr.length - 1: find arr (i1 + 1) 0 0
+
+export fn main argv:
+  fs.readFileSync argv[2] # encoding: "utf8"
+    -> .split "\n"
+    -> * Number 10
+    -> find 0 0 0
+    -> console.log

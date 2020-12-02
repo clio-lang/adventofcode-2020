@@ -1,0 +1,20 @@
+import "fs"
+import * as r from "./regex"
+
+r"(\\d+)-(\\d+) (.): (.+)" => pattern
+
+fn validate line:
+  line.match pattern => parts
+  parts[1] -> Number -> n: n - 1 => indexA
+  parts[2] -> Number -> n: n - 1 => indexB
+  parts[3] => char
+  parts[4] => password
+  password[indexA] = char != password[indexB] or
+  password[indexB] = char != password[indexA] 
+
+export fn main argv:
+  fs.readFileSync argv[2] # encoding: "utf8"
+    -> .split "\n"
+    -> * validate
+    -> .filter Boolean
+    -> result: console.log result.length
