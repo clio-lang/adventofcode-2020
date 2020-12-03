@@ -1,0 +1,13 @@
+import "fs"
+
+fn traverse lines x y trees:
+  if y = lines.length: trees
+  else:
+    lines[y][(x % lines[0].length)] = "#" and 1 or 0 => inc
+    traverse lines (x + 3) (y + 1) (trees + inc)
+
+export fn main argv:
+  fs.readFileSync argv[2] # encoding: "utf8"
+    -> .split "\n"
+    -> traverse 0 0 0
+    -> console.log

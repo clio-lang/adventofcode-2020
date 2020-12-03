@@ -1,0 +1,22 @@
+import "fs"
+
+fn mul lhs rhs:
+  lhs * rhs
+
+fn traverse lines x y dx dy trees:
+  if y >= lines.length: trees
+  else:
+    lines[y][(x % lines[0].length)] = "#" and 1 or 0 => inc
+    traverse lines (x + dx) (y + dy) dx dy (trees + inc)
+
+export fn main argv:
+  fs.readFileSync argv[2] # encoding: "utf8"
+    -> .split "\n"
+    ->
+      traverse 0 0 1 1 0
+      traverse 0 0 3 1 0
+      traverse 0 0 5 1 0
+      traverse 0 0 7 1 0
+      traverse 0 0 1 2 0
+    -> .reduce mul
+    -> console.log
