@@ -1,0 +1,11 @@
+import "fs"
+import * as r from "./regex"
+
+export fn main argv:
+  fs.readFileSync argv[2] # encoding: "utf8"
+    -> .split "\n\n"
+    -> * passport: (passport.replace (r "\n" "g") " " -> .split r" +")
+    -> * pairs: (pairs.filter Boolean -> * kv: kv.split ":" -> * .shift)
+    -> * keys: keys.length = 8 or (keys.length = 7 and not "cid" in keys)
+    -> .filter Boolean
+    -> result: console.log result.length

@@ -1,0 +1,28 @@
+import "fs"
+import * as r from "./regex"
+
+fn is-valid-height height:
+  height.match r"(\\d+)(cm|in)" => match
+  match and ((match[2] = "cm" and 150 <= Number match[1] <= 193) or
+             (match[2] = "in" and 59 <= Number match[1] <= 76))
+
+fn validate passport:
+  Object.keys passport => keys
+  (keys.length = 8 or (keys.length = 7 and not passport.cid))                           and
+  (passport.byr and passport.byr.length = 4 and 1920 <= Number passport.byr <= 2002)    and
+  (passport.iyr and passport.iyr.length = 4 and 2010 <= Number passport.iyr <= 2020)    and
+  (passport.eyr and passport.eyr.length = 4 and 2020 <= Number passport.eyr <= 2030)    and
+  (passport.hgt and is-valid-height passport.hgt)                                       and
+  (passport.hcl and passport.hcl.match (r "^#[0-9a-f]{6}$"))                            and
+  (passport.ecl and passport.ecl.match r"^amb|blu|brn|gry|grn|hzl|oth$")                and
+  (passport.pid and passport.pid.length = 9 and Number.isInteger (Number passport.pid))
+
+export fn main argv:
+  fs.readFileSync argv[2] # encoding: "utf8"
+    -> .split "\n\n"
+    -> * passport: (passport.replace (r "\n" "g") " " -> .split r" +")
+    -> * pairs: (pairs.filter Boolean -> * kv: kv.split ":")
+    -> * entries: Object.fromEntries entries
+    -> * validate
+    -> .filter Boolean
+    -> result: console.log result.length
