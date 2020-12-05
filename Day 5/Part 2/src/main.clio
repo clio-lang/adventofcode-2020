@@ -1,0 +1,39 @@
+import "fs"
+
+fn parse acc char:
+  if char = acc.lowChar:
+    # low: acc.low
+      high: (acc.high + acc.low) // 2
+      lowChar: acc.lowChar
+  else:
+    # low: ((acc.high + acc.low) // 2) + 1
+      high: acc.high
+      lowChar: acc.lowChar
+
+fn getRowId code:
+  code.slice 0 7
+    -> .split ""
+    -> .reduce parse # low: 0 high: 127 lowChar: "F"
+    => row
+
+  code.slice 7
+    -> .split ""
+    -> .reduce parse # low: 0 high: 7 lowChar: "L"
+    => col
+
+  row.low * 8 + col.low
+
+fn ascending a b:
+  a - b
+
+fn findSeat seats index:
+  if seats[(index + 1)] = seats[index] + 1: findSeat seats (index + 1)
+  else: seats[index] + 1
+
+export fn main argv:
+  fs.readFileSync argv[2] # encoding: "utf8"
+    -> .split "\n"
+    -> * getRowId
+    -> .sort ascending
+    -> findSeat 0
+    -> console.log
