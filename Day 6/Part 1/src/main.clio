@@ -1,0 +1,15 @@
+import "fs"
+import "./regex"
+import "./set"
+
+fn sum a b:
+  a + b
+
+export fn main argv:
+  fs.readFileSync argv[2] # encoding: "utf8"
+    -> .split "\n\n"
+    -> * line: line.split (regex "\n|(?=.)")
+    -> * set
+    -> * unique: unique.size
+    -> .reduce sum
+    -> console.log

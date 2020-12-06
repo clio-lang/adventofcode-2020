@@ -1,0 +1,16 @@
+import "fs"
+
+fn union a b:
+  a.filter (item: b.includes item)
+
+fn sum a b:
+  a + b
+
+export fn main argv:
+  fs.readFileSync argv[2] # encoding: "utf8"
+    -> .split "\n\n"
+    -> * lines: (lines.split "\n" -> * line: line.split "")
+    -> * lines: lines.reduce union lines[0]
+    -> * union: union.length
+    -> .reduce sum
+    -> console.log
